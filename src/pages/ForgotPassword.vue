@@ -19,7 +19,7 @@
               </div>
             </q-card-section>
             <q-card-actions align="center">
-              <q-btn color="black" class="full-width q-mt-md" label="Submit" @click="onClickLogin"/>
+              <q-btn color="black" class="full-width q-mt-md" label="Submit" @click="onClickSubmit"/>
               <q-btn color="black" class="full-width q-mt-md" label="Back To Login" @click="onClickBack"/>
             </q-card-actions>
           </q-card>
@@ -31,7 +31,7 @@
 
 
 <script>
-//import ErrorDialog from '../components/ErrorDialog'
+import ErrorDialog from '../components/ErrorDialog'
 
 export default {
   data() {
@@ -43,6 +43,49 @@ export default {
   methods: {
     onClickBack() {
         this.$router.push('/')
+    },
+    onClickSubmit () {
+        var _this = this;
+        //Show loading here
+        this.$Loading.show("Processings....");
+        //Run Query
+        var postData = {
+            Email: _this.Email
+        }
+        _this.Endpoints.ForgotPassword({
+        data: postData,
+        success: (response) => {
+            if (response.data.Status === "Success") {
+                //Show Message
+                //_this.data = response.data.Data.Data
+                //_this.pagination.rowsNumber = response.data.Data.RowsCount
+                _this.$q.dialog({
+                title: 'Success',
+                message: 'Successfully Updated',
+                persistent: true
+                })
+                
+            } 
+            else {
+                _this.$q.dialog({
+                    component: ErrorDialog,
+                    root: _this.$root,
+                    message: response.data.Message,
+                    title: "Error"
+                })
+            }
+            _this.$Loading.hide();
+        },
+        error: () => {
+            _this.$q.dialog({
+            component: ErrorDialog,
+            root: _this.$root,
+            message: "An Error Occurred Please Try Again.",
+            title: "Error"
+            })
+            _this.$Loading.hide();
+        }
+        });
     }
   }
 }

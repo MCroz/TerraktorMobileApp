@@ -52,4 +52,9 @@ export default {
         .then(params.success)
         .catch(params.error);
     },
+    ForgotPassword(params) {
+        return Api().post('api/ForgotPassword.php',params.data)
+        .then(params.success)
+        .catch(params.error);
+    },    
 }
